@@ -5,7 +5,7 @@
   "dependencies": {
     "@cap-js/hana": "^2",
     "@sap/cds": "^9",
-    "@sap/xssec": "^4.13.0",
+    "@sap/xssec": "^4",
     "express": "^4"
   },
   "devDependencies": {
@@ -17,8 +17,18 @@
   },
   "private": true,
   "cds": {
+    "fiori":{
+      "preview":true
+    },
+    "server":{
+      "index":true
+    },
     "requires": {
-      "auth": "mocked"
+      "auth": "mocked",
+      "[production]": {
+        "auth": "xsuaa",
+        "db": "hana"
+      }
     }
   }
 }

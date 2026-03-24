@@ -25,6 +25,7 @@ modules:
           srv-url: ${default-url}
     requires:
       - name: deploy-db
+      - name: deploy-auth
 
   - name: deploy-db-deployer
     type: hdb
@@ -33,6 +34,26 @@ modules:
       buildpack: nodejs_buildpack
     requires:
       - name: deploy-db
+  - name: deploy
+    type: approuter.nodejs
+    path: app/router
+    parameters:
+      keep-existing-routes: true
+      disk-quota: 256M
+      memory: 256M
+    requires:
+      - name: srv-api
+        group: destinations
+        properties:
+          name: srv-api # must be used in xs-app.json as well
+          url: ~{srv-url}
+          forwardAuthToken: true
+      - name: deploy-auth
+    provides:
+      - name: app-api
+        properties:
+          app-protocol: ${protocol}
+          app-uri: ${default-uri}
 
 resources:
   - name: deploy-db
@@ -40,3 +61,20 @@ resources:
     parameters:
       service: hana
       service-plan: hdi-shared
+  - name: deploy-auth
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: xsuaa
+      service-plan: application
+      path: ./xs-security.json
+      config:
+        xsappname: deploy-${org}-${space}
+        tenant-mode: dedicated
+        oauth2-configuration:
+          credential-types:
+            - "binding-secret"
+            - "x509"
+          redirect-uris:
+            - https://*~{app-api/app-uri}/**
+    requires:
+      - name: app-api
