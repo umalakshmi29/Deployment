@@ -1,0 +1,25 @@
+{
+  "name": "task6",
+  "version": "1.0.0",
+  "description": "A simple CAP project.",
+  "dependencies": {
+    "@sap/cds": "^9",
+    "@sap/xsenv": "^6.1.0",
+    "@sap/xssec": "^4.13.0",
+    "axios": "^1.14.0",
+    "express": "^4"
+  },
+  "devDependencies": {
+    "@cap-js/sqlite": "^2",
+    "@sap/cds-dk": "^9"
+  },
+  "scripts": {
+    "start": "cds-serve"
+  },
+  "private": true,
+  "cds": {
+    "requires": {
+      "auth": "mocked"
+    }
+  }
+}
